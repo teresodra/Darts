@@ -169,7 +169,7 @@ class DartboardApp(App):
             print('self.skill', self.skill, type(self.skill))
             # Placeholder for Player and GameStrategy classes. 
             # Uncomment and replace these lines with actual classes as per your setup.
-            self.player = Player(((self.skill^2, 0), (0, self.skill^2)))
+            self.player = Player(sigma=((self.skill^2, 0), (0, self.skill^2)))
             self.strategy = GameStrategy(player=self.player, n_turns=self.turns_left, max_points=self.points_left).generating_strategy()
             self.game()
             self.update_stats()  # <-- Add this line here

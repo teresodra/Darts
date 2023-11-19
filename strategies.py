@@ -1,14 +1,15 @@
 import numpy as np
+from given_strategy import give_strategy
 
 class GameStrategy:
-    def __init__(self, player, n_turns, max_points):
+    def __init__(self, player, n_turns, max_points, mode='optimal'):
         self.n_turns = n_turns
         self.max_points = max_points
         self.player = player
         self.stored_probabilities = player.grid_probabilities
-        self.strategy = self.generating_strategy()
+        self.strategy = self.generating_strategy(mode=mode)
 
-    def prob_finish_aiming_at_P(self, points_left, values_prob, prev_dart_prob, turn_initial_prob):
+    def prob_finish_given_probs(self, points_left, values_prob, prev_dart_prob, turn_initial_prob):
         '''
         Calculate the probability of finishing in one dart more than prev_dart_prob if we aim for the point P
         on the dartboard when we have 'points_left' points to go and darts_left darts left.
@@ -35,7 +36,7 @@ class GameStrategy:
         optimal_prob = 0
 
         for coordinate, probabilities in self.stored_probabilities.items():
-            prob_n = self.prob_finish_aiming_at_P(points_left, probabilities, prev_dart_prob, prev_turn_prob)
+            prob_n = self.prob_finish_given_probs(points_left, probabilities, prev_dart_prob, prev_turn_prob)
             if prob_n > optimal_prob:
                 optimal_prob = prob_n
                 optimal_coordinate = coordinate
@@ -46,6 +47,11 @@ class GameStrategy:
         '''
         Calculate the strategy to maximize the probability of finishing
         with one dart more than prev_dart_prob.
+
+        Returns best_strategy and probabilities.
+        best_strategy is a dictionary with points left as keys.
+        Each of this keys store another dictionary with keys 'coordinates' and 'probability'
+        containing the optimal coordinate to aim to and the probability of finishing if so.
         '''
         best_strategy = dict()
         probabilities = np.zeros(self.max_points + 1)
@@ -65,20 +71,37 @@ class GameStrategy:
         when throwing according to the distribution D
         '''
 
-        best_strategy_stored = dict()
+        strategy_stored = dict()
+        # keys are points left
+        # values are dictionaries having 'coordinates' and 'probability' as keys
         prev_dart_prob = np.zeros(self.max_points+1)
         prev_turn_prob = np.zeros(self.max_points+1)
+        print(mode)
+
+        if mode == 'given':
+            given_strategy = give_strategy(self.max_points)
 
         for turn in range(self.n_turns + 1):
             for darts_left in range(1, 3 + 1):
                 # print('darts', darts_left)
                 if mode == 'optimal':
-                    best_strategy, new_prob = self.one_dart_more_strategy_calculator(prev_dart_prob, prev_turn_prob)
-                    best_strategy_stored[(turn, darts_left)] = best_strategy
+                    strategy, new_prob = self.one_dart_more_strategy_calculator(prev_dart_prob, prev_turn_prob)
                 elif mode == 'given':
-                    strategy = given_stategy[darts_left]
-                    best_strategy = add_probabilities(strategy, prev_dart_prob, prev_turn_prob)
+                    strategy, new_prob = self.add_probabilities(given_strategy, prev_dart_prob, prev_turn_prob)
+                else:
+                    raise Exception(f"I don't know any strategy called {mode}")
+                strategy_stored[(turn, darts_left)] = strategy
                 prev_dart_prob = new_prob
             prev_turn_prob = new_prob
+        return strategy_stored
 
-        return best_strategy_stored
+    def add_probabilities(self, strategy, prev_dart_prob, prev_turn_prob):
+        deduced_strategy = dict()
+        probabilities = dict()
+        for points_left, coordinates in strategy.items():
+            deduced_strategy[points_left] = dict()
+            deduced_strategy[points_left]['coordinates'] = coordinates
+            probability = self.prob_finish_given_probs(points_left, self.stored_probabilities[coordinates], prev_dart_prob, prev_turn_prob)
+            deduced_strategy[points_left]['probability'] = probability
+            probabilities[points_left] = probability
+        return deduced_strategy, probabilities

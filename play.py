@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.integrate import dblquad
+# from scipy.integrate import dblquad
 from players import Player
 from strategies import GameStrategy
 from constants import positions
@@ -14,17 +14,18 @@ def run_this_fast():
     # n_turns= int(input("In how many turns do you want to end?"))
     # skill = int(input("What is your skill level?(1-50)\n 1->Master of darts \n 50->Sometimes I hit the dartboard \n For reference, someone with skill 20 hits the desired double cell one out of 8 times."))
 
-    starting_points = 101
-    n_turns = 10
-    skill = 20
-
+    starting_points = 40
+    n_turns = 3
+    skill = 200
+    mode = 'optimal'
+    # mode = 'given'
     # distance = lambda r, phi, r_P, phi_P: np.sqrt(r_P**2 + r**2 - 2 * r_P * r * np.cos(phi_P - phi))
     # D = lambda r, phi, r_P, phi_P: r * np.exp(-1/2 * (distance(r, phi, r_P, phi_P)/skill)**2)
 
     print(f"Wait for {starting_points * n_turns * 3 * 6 / 60} minutes")  # in seconds: number of points to calculate, number of turns, 3 darts, 6 seconds for each
 
-    player = Player(((skill^2, 0),(0,skill^2)))
-    game_strategy = GameStrategy(player, n_turns=n_turns, max_points=starting_points)
+    player = Player(create_distribution=True)
+    game_strategy = GameStrategy(player, n_turns=n_turns, max_points=starting_points, mode=mode)
     best_strategy_stored = game_strategy.strategy
 
     playing = 1
@@ -37,30 +38,26 @@ def run_this_fast():
             print(f"You have {points} points left.")
             print(f"You have {darts_left} darts left and {turn} turns left.")
 
-            print(best_strategy_stored.keys())
-
-            best_strategy_stored[(turn, darts_left)]
-            best_strategy_stored[(turn, darts_left)][points]
-            print(best_strategy_stored[(turn, darts_left)][points]['coordinates'])
-            best_strategy_stored[(turn, darts_left)][points]['coordinates'][0]
+            # best_strategy_stored[(turn, darts_left)]
+            # best_strategy_stored[(turn, darts_left)][points]
+            # best_strategy_stored[(turn, darts_left)][points]['coordinates'][0]
 
             print('\nposition', best_strategy_stored[(turn, darts_left)][points]['coordinates'][1])
 
-            # position = round(best_strategy_stored[(turn, darts_left)][points]['coordinates'][1] * 20 / (2 * np.pi))
-            # r = best_strategy_stored[(turn, darts_left)][points]['coordinates'][0]
+            angle = best_strategy_stored[(turn, darts_left)][points]['coordinates'][1]
+            position = angle * 20 / (2 * np.pi)
+            r = best_strategy_stored[(turn, darts_left)][points]['coordinates'][0]
 
             # print('\nposition', position)
 
-            # if r == 0:
-            #     print("Aim the bullseye!")
-            # else:
-            #     print(f"You have to aim to the point of the dartboard with radius {r}", end='')
-            #     if type(position) == int:
-            #         print('\n', positions, '\n')
-            #         print(f" in {positions[position]}")
-            #     else:
-            #         print('\nint(position+0.5)-1', int(position+0.5)-1)
-            #         print(f" between {positions[int(position-0.5)-1]} and {positions[int(position+0.5)-1]}")
+            if r == 0:
+                print("Aim the bullseye!")
+            else:
+                print(f"You have to aim to the point of the dartboard with radius {r}", end='')
+                if type(position) == int:
+                    print(f" in {positions[position]}")
+                else:
+                    print(f" with angle {angle}")
 
             print(f"If you do that, you will end with probability {best_strategy_stored[(turn, darts_left)][points]['probability']}")
 
