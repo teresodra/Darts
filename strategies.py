@@ -1,13 +1,36 @@
+import os
+import pickle
 import numpy as np
 from given_strategy import give_strategy
+from players import Player
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):
+        # Check the type of 'player'
+        if isinstance(player, str):
+            # Load the player object from a file if 'player' is a string
+            self.player = self.load_player(player)
+        elif isinstance(player, Player):
+            # Use the player object directly if it's an instance of Player
+            self.player = player
+        else:
+            # Raise an error if 'player' is neither a string nor a Player instance
+            raise ValueError("The 'player' argument must be either a file path (str) or an instance of the Player class.")
+
         self.n_turns = n_turns
         self.max_points = max_points
-        self.player = player
         self.stored_probabilities = player.grid_probabilities
         self.strategy = self.generating_strategy(mode=mode)
+
+    def load_player(self, file_name):
+        # Construct the full path
+        file_path = os.path.join('players', file_name)
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"No saved player found at {file_path}")
+
+        with open(file_path, 'rb') as file:
+            player = pickle.load(file)
+        return player
 
     def prob_finish_given_probs(self, points_left, values_prob, prev_dart_prob, turn_initial_prob):
         '''
@@ -65,6 +88,7 @@ class GameStrategy:
 
         return best_strategy, probabilities
 
+
     def generating_strategy(self, mode='optimal'):
         '''
         This function generates the strategy to maximize the probability of finishing in the next n turns
@@ -76,7 +100,6 @@ class GameStrategy:
         # values are dictionaries having 'coordinates' and 'probability' as keys
         prev_dart_prob = np.zeros(self.max_points+1)
         prev_turn_prob = np.zeros(self.max_points+1)
-        print(mode)
 
         if mode == 'given':
             given_strategy = give_strategy(self.max_points)
@@ -95,13 +118,18 @@ class GameStrategy:
             prev_turn_prob = new_prob
         return strategy_stored
 
+
     def add_probabilities(self, strategy, prev_dart_prob, prev_turn_prob):
         deduced_strategy = dict()
         probabilities = dict()
         for points_left, coordinates in strategy.items():
             deduced_strategy[points_left] = dict()
             deduced_strategy[points_left]['coordinates'] = coordinates
-            probability = self.prob_finish_given_probs(points_left, self.stored_probabilities[coordinates], prev_dart_prob, prev_turn_prob)
+            try:
+                prob_of_each_part = self.stored_probabilities[coordinates]
+            except KeyError:
+                prob_of_each_part = self.player.probabilities(coordinates)
+            probability = self.prob_finish_given_probs(points_left, prob_of_each_part, prev_dart_prob, prev_turn_prob)
             deduced_strategy[points_left]['probability'] = probability
             probabilities[points_left] = probability
         return deduced_strategy, probabilities

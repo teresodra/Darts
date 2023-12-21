@@ -1,39 +1,3 @@
-# from kivy.app import App
-# from kivy.uix.widget import Widget
-# from kivy.graphics import Color, Ellipse, Line
-# from math import pi, sin, cos
-
-# class Dartboard(Widget):
-#     def __init__(self, **kwargs):
-#         super(Dartboard, self).__init__(**kwargs)
-        
-#         # Define colors
-#         black = (0, 0, 0)
-#         white = (1, 1, 1)
-#         green = (0, 0.5, 0)
-#         red = (1, 0, 0)
-        
-#         # Define some parameters
-#         center_x = self.center_x
-#         center_y = self.center_y
-#         radii = [self.width * 0.5, self.width * 0.45, self.width * 0.25, self.width * 0.05, self.width * 0.025]
-        
-#         with self.canvas:
-#             # Draw the circles
-#             for i, r in enumerate(radii):
-#                 # Alternate between white and black for the main sections
-#                 Color(*white if i % 2 == 0 else black)
-#                 Ellipse(pos=(center_x - r, center_y - r), size=(r*2, r*2))
-            
-#             # Draw the colored sections (double and triple score areas)
-#             for angle in range(0, 360, 18):  # 20 sections, 360/20 = 18 degrees per section
-#                 start_angle = angle * pi / 180
-#                 stop_angle = (angle + 18) * pi / 180
-#                 for r, color in [(radii[1], green), (radii[2], red)]:
-#                     Color(*color)
-#                     Line(points=[center_x, center_y, center_x + r * cos(start_angle), center_y + r * sin(start_angle)], width=1.5)
-#                     Line(points=[center_x, center_y, center_x + r * cos(stop_angle), center_y + r * sin(stop_angle)], width=1.5)
-
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Ellipse, Line, Point
@@ -209,45 +173,6 @@ class DartboardApp(App):
         score_btn.bind(on_press=self.update_game)
         self.input_layout.add_widget(score_btn)
         self.layout.add_widget(self.input_layout)
-
-
-
-    # def display_dartboard_with_aiming_point(self, coordinates):
-
-        
-    #     print(coordinates)
-    #     self.layout.clear_widgets()
-
-    #     # Horizontal layout to separate dartboard and input boxes/buttons.
-    #     hbox = BoxLayout(orientation="horizontal")
-    #     self.dartboard = Dartboard(size=(500, 500), pos=(50, 50))
-    #     # self.layout.add_widget(self.dartboard)
-    
-    #     # Instead, let's create the hbox and add dartboard to hbox
-    #     hbox = BoxLayout(orientation="horizontal")
-    #     hbox.add_widget(self.dartboard)
-        
-    #     # Add a center point to the Dartboard's canvas
-    #     with self.dartboard.canvas:
-    #         Color(1, 0, 0)
-    #         Point(points=[self.dartboard.center_x + (coordinates[0] * cos(coordinates[1]))*self.dartboard.my_mm,
-    #                       self.dartboard.center_y + (coordinates[0] * sin(coordinates[1]))*self.dartboard.my_mm],
-    #               pointsize=5)
-            
-
-
-    #     # VBox for input and buttons.
-    #     # Adjust position and size for vbox
-    #     vbox = BoxLayout(orientation="vertical", size_hint=(0.3, 0.2), pos_hint={'right': 1, 'top': 0.7})
-    #     self.score_input = self.add_label_and_input("Enter points scored:")[1]
-    #     score_btn = Button(text="Submit Score")
-    #     score_btn.bind(on_press=self.update_game)
-    #     vbox.add_widget(score_btn)
-    #     hbox.add_widget(vbox)
-    
-    #     # Finally, add hbox to the main layout
-    #     self.layout.add_widget(hbox)
-
     
 
     def game(self, what = ''):
@@ -273,7 +198,7 @@ class DartboardApp(App):
             self.probability = self.strategy[(self.turns_left, self.darts_left)][self.points_left]['probability']
             print(list(self.strategy.keys())[0])
             print(list(self.strategy[list(self.strategy.keys())[0]].keys()))
-            print(list(self.strategy.keys()))
+            print(self.strategy[(2,2)])
             self.display_dartboard_with_aiming_point()
 
         else:
@@ -295,12 +220,6 @@ class DartboardApp(App):
             self.layout.clear_widgets()
             win_label = Label(text="Congratulations! You've won!")
             self.layout.add_widget(win_label)
-            return
-            # Player has overshot the target
-            self.layout.clear_widgets()
-            over_label = Label(text="Oops! You've overshot the target.")
-            self.layout.add_widget(over_label)
-            # Depending on your game logic, you can end the game here or continue
             return
         else:
             self.darts_left -= 1

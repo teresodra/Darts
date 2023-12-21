@@ -34,6 +34,7 @@ def run_this_fast():
         points = starting_points
         turn = n_turns
         darts_left = 3
+        points_last_turn = points
         while won == 0 and turn != 0:
             print(f"You have {points} points left.")
             print(f"You have {darts_left} darts left and {turn} turns left.")
@@ -76,10 +77,12 @@ def run_this_fast():
                     print("You scored too many points, you end this turn")
                     turn = turn - 1
                     darts_left = 3
+                    points = points_last_turn
 
             if darts_left == 0:
                 turn = turn - 1
                 darts_left = 3
+                points_last_turn = points
 
         if won == 1:
             print("Congratulations! You won!!")
@@ -89,4 +92,5 @@ def run_this_fast():
         playing = int(input("Do you want to play again? (1->Yes; 0->No)"))
 
 
-run_this_fast()
+if __name__ == '__main__':
+    run_this_fast()

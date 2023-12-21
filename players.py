@@ -1,11 +1,24 @@
+import os
+import pickle
 import math
 import numpy as np
 from constants import radiuses, positions
 
+from scipy.stats import chi2
+import numpy.linalg as linalg
+from matplotlib import patches
+import matplotlib.pyplot as plt
+
 class Player:
-    def __init__(self, create_distribution = False, mean = (0,0), sigma=((300, 0), (0, 300))):
+    def __init__(self,
+                 create_distribution = False,
+                 mean = (0,0),
+                 sigma=((300, 0), (0, 300)),
+                 points = np.array([[10, 20], [20, 10], [30, 40], [40, 30]]),
+                 name='player'):
+        self.name = name
         if create_distribution:
-            mean, sigma = self.create_distribution(None)
+            mean, sigma = self.create_distribution(None, points=points)
         self.sigma = sigma
         self.det_sigma = sigma[0][0]*sigma[1][1] - sigma[0][1]*sigma[1][0]
         self.inv_sigma = (
@@ -14,11 +27,18 @@ class Player:
         )
         self.mean = mean
         self.grid_probabilities = self.generate_grid_probabilities()
+        self.save_to_file()
 
-    def create_distribution(self, dartboard, force_mean_0=False):
+    def save_to_file(self):
+        if not os.path.exists('players'):
+            os.makedirs('players')
+        with open(f'players/{self.name}.pkl', 'wb') as file:
+            pickle.dump(self, file)
+
+    def create_distribution(self, dartboard, points, force_mean_0=False):
         # obtain points asking to aim for the centre
         #  + (self.coordinates[0] * cos(self.coordinates[1]))*
-        points = np.array([[10, 20], [20, 10], [30, 40], [40, 30]])
+        
 
         # # convert to distances in the real world dartboard
         # real_points = [((point - dartboard.center_x)/dartboard.my_mm,
@@ -28,7 +48,7 @@ class Player:
         # Calculate the mean and sigma of the data
         if force_mean_0:
             mean = 0
-            sigma = ()
+            sigma = np.dot(points.T, points) / len(points)
         else:
             mean = np.mean(points, axis=0)
             sigma = np.cov(points, rowvar=False)
@@ -62,7 +82,10 @@ class Player:
         return integral
 
 
-    def generate_grid_probabilities(self, phi_grid_size=40, r_grid_size=5):
+    def generate_grid_probabilities(self, phi_grid_size=20, r_grid_size=2):
+        if r_grid_size % 2 == 1:
+            r_grid_size += 1
+            # We want to ensure the grid is even so that the central points of the cells are a posibility
         grid_probabilities = dict()
         grid_probabilities[(0,0)] = self.probabilities((0, 0))
 
@@ -101,8 +124,54 @@ class Player:
 
         p = p / np.sum(p)
         return p
+    
+    def visual(self):
 
-# player = Player()
-# game = GameStrategy(player, n_turns=3, max_points=101)
+        # Eigenvalues and eigenvectors
+        eigenvalues, eigenvectors = linalg.eigh(self.sigma)
+
+        # Scaling factor for 50% coverage (chi-square quantile at 50% with 2 degrees of freedom)
+        scale_factor = np.sqrt(chi2.ppf(0.5, 2))
+
+        # Lengths of the semi-axes
+        axes_lengths = scale_factor * np.sqrt(eigenvalues)
+
+        # Angle of rotation for the ellipse
+        angle = np.arctan2(eigenvectors[1, 0], eigenvectors[0, 0])
+
+        # Calculate the extents of the ellipse
+        x_radius = axes_lengths[0]
+        y_radius = axes_lengths[1]
+        left_extent = self.mean[0] - x_radius
+        right_extent = self.mean[0] + x_radius
+        bottom_extent = self.mean[1] - y_radius
+        top_extent = self.mean[1] + y_radius
+
+        # Add some padding
+        padding = max(x_radius, y_radius) * 0.1  # 10% padding
+
+        # Plotting
+        fig, ax = plt.subplots()
+        ellipse = patches.Ellipse(xy=self.mean, width=2*axes_lengths[0], height=2*axes_lengths[1], 
+                                angle=np.degrees(angle), edgecolor='r', fc='None', lw=2, label='50% Coverage Ellipse')
+        ax.add_patch(ellipse)
+
+        # Adjust axes limits
+        ax.set_xlim(left_extent - padding, right_extent + padding)
+        ax.set_ylim(bottom_extent - padding, top_extent + padding)
+
+        ax.set_aspect('equal', 'datalim')
+        plt.xlabel('X-axis')
+        plt.ylabel('Y-axis')
+        plt.title('Ellipse Covering 50% of Points')
+        plt.legend()
+        plt.show()
+
+
+if __name__ == '__main__':
+
+    player = Player()
+    player.visual()
+    # game = GameStrategy(player, n_turns=3, max_points=101)
 
 
