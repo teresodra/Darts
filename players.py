@@ -35,15 +35,16 @@ class Player:
         with open(f'players/{self.name}.pkl', 'wb') as file:
             pickle.dump(self, file)
 
-    def create_distribution(self, dartboard, points, force_mean_0=False):
-        # obtain points asking to aim for the centre
-        #  + (self.coordinates[0] * cos(self.coordinates[1]))*
-        
+    def create_distribution(self, points:list, dartboard:dict, force_mean_0:bool=False):
+        """
+        This function will compute the throwing distribution of the player.
+        points is a list of 2-tuples giving the coordinates of the points the user clicked
+        dartboard is a dictionary with two keys
+            - 'centre' whose value is a 2-tuple giving the coordinates of the centre in the screen
+            - 'diametre' whose value is the diametre of the dartboard in the screen
+        """
 
-        # # convert to distances in the real world dartboard
-        # real_points = [((point - dartboard.center_x)/dartboard.my_mm,
-        #                 (point - dartboard.center_y)/dartboard.my_mm)
-        #                 for point in points]
+        # Transform points to real distances
 
         # Calculate the mean and sigma of the data
         if force_mean_0:
