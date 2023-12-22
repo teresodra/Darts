@@ -18,7 +18,7 @@ class Player:
                  name='player'):
         self.name = name
         if create_distribution:
-            mean, sigma = self.create_distribution(None, points=points)
+            mean, sigma = self.create_distribution(points=points)
         self.sigma = sigma
         self.det_sigma = sigma[0][0]*sigma[1][1] - sigma[0][1]*sigma[1][0]
         self.inv_sigma = (
@@ -35,7 +35,7 @@ class Player:
         with open(f'players/{self.name}.pkl', 'wb') as file:
             pickle.dump(self, file)
 
-    def create_distribution(self, points:list, dartboard:dict, force_mean_0:bool=False):
+    def create_distribution(self, points:list, dartboard:dict=None, force_mean_0:bool=False):
         """
         This function will compute the throwing distribution of the player.
         points is a list of 2-tuples giving the coordinates of the points the user clicked
