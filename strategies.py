@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 from given_strategy import give_strategy
 from players import Player
+from util.find_filenames import find_strategy
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):
@@ -10,21 +11,42 @@ class GameStrategy:
         if isinstance(player, str):
             # Load the player object from a file if 'player' is a string
             self.player = self.load_player(player)
+            self.player_name = player
         elif isinstance(player, Player):
             # Use the player object directly if it's an instance of Player
             self.player = player
+            self.player_name = player.name
         else:
             # Raise an error if 'player' is neither a string nor a Player instance
             raise ValueError("The 'player' argument must be either a file path (str) or an instance of the Player class.")
 
         self.n_turns = n_turns
         self.max_points = max_points
-        self.stored_probabilities = player.grid_probabilities
+        self.stored_probabilities = self.player.grid_probabilities
+
+        # strategy_exists = False
+        # # List all files in the folder
+        # for filename in os.listdir('strategies'):
+        #     # Check if file starts with the player's name and has enough points
+        #     if filename.startswith(f"{self.player_name}-") and int(filename.split('-')[1].split('.')[0]) >= max_points:
+        #         strategy_exists = True
+        #         # if it does, we copy this strategy
+        #         with open(filename, 'rb') as file:
+        #             self.strategy = pickle.load(file)
+        # if not strategy_exists:
+
         self.strategy = self.generating_strategy(mode=mode)
+        filename = find_strategy(self.player.name, max_points, mode)
+        with open(filename, 'wb') as file:
+            pickle.dump(self.strategy, file)
+
 
     def load_player(self, file_name):
         # Construct the full path
-        file_path = os.path.join('players', file_name)
+        folder = 'players'
+        files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder, file))]
+        print(files)
+        file_path = os.path.join('players', f'{file_name}.pkl')
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"No saved player found at {file_path}")
 
