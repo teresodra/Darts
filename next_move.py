@@ -3,6 +3,7 @@ import pickle
 from util.find_filenames import find_strategy
 from players import Player
 from strategies import GameStrategy
+from util.load_objects import load_strategy
 
 def next_move(player_name, max_points, points_left, points_scored, last_turn_points, turn, darts_left, mode, hit_double=0):
     # send dictionary instead
@@ -32,14 +33,8 @@ def next_move(player_name, max_points, points_left, points_scored, last_turn_poi
     return win, points_left, last_turn_points, turn, darts_left, best_coordinates, best_probability
 
 
-def load_strategy(player_name, max_points, mode):
-    filename = find_strategy(player_name, max_points, mode)
-    with open(filename, 'rb') as file:
-        strategy = pickle.load(file)
-    return strategy
-
-
 if __name__ == "__main__":
+    # Initialised values needed to start game
     player_name = 'mario'
     max_points = last_turn_points = points_left = 101
     mode = 'optimal'
@@ -48,10 +43,11 @@ if __name__ == "__main__":
     win = False
     Player(mean=(0,0), sigma=((300,0),(0,300)), name=player_name)
     GameStrategy(player_name, n_turns=turn, max_points=max_points, mode=mode)
-    strategy = load_strategy(player_name, max_points, mode)
+    strategy = load_strategy(player_name, max_points, mode, turns=turn)
     best_coordinates = strategy[(turn, darts_left)][points_left]['coordinates']
     best_probability = strategy[(turn, darts_left)][points_left]['probability']
-    while not win and (turn>0 or (turn==0 and darts_left==0)):
+    while not win and turn>=0:
+        # while the game hasn't finished do next_move and give the info to the user
         print(f"\n\n\n\nTurns: {turn}\nDarts left: {darts_left}")
         print(f"You have {points_left} points left.")
         print(f"If you aim to {best_coordinates} you will finish with probability {best_probability}")
@@ -59,7 +55,8 @@ if __name__ == "__main__":
         double = False
         if points_scored == points_left:
             double = int(input("Did you hit a double? (1-Yes/0-No)"))
-        win, points_left, last_turn_points, turn, darts_left, best_coordinates, best_probability = next_move(player_name, max_points, points_left, points_scored, last_turn_points, turn, darts_left, mode, hit_double=double)
+        if turn > 0:
+            win, points_left, last_turn_points, turn, darts_left, best_coordinates, best_probability = next_move(player_name, max_points, points_left, points_scored, last_turn_points, turn, darts_left, mode, hit_double=double)
     if win:
         print("You won!")
     else:

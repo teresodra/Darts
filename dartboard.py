@@ -162,8 +162,8 @@ class DartboardApp(App):
             self.dartboard
             self.dartboard.my_mm
             print(self.coordinates)
-            Point(points=[self.dartboard.center_x + (self.coordinates[0] * cos(self.coordinates[1]))*self.dartboard.my_mm,
-                          self.dartboard.center_y + (self.coordinates[0] * sin(self.coordinates[1]))*self.dartboard.my_mm],
+            Point(points=[self.dartboard.center_x + self.coordinates[0]*self.dartboard.my_mm,
+                          self.dartboard.center_y + self.coordinates[1]*self.dartboard.my_mm],
                   pointsize=5)
 
         # Create a VBox layout for score input and button

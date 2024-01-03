@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from given_strategy import give_strategy
 from players import Player
-from util.find_filenames import find_strategy
+from util.find_filenames import find_strategy_filename
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):
@@ -36,7 +36,7 @@ class GameStrategy:
         # if not strategy_exists:
 
         self.strategy = self.generating_strategy(mode=mode)
-        filename = find_strategy(self.player.name, max_points, mode)
+        filename = find_strategy_filename(self.player.name, max_points, mode)
         with open(filename, 'wb') as file:
             pickle.dump(self.strategy, file)
 

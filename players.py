@@ -97,7 +97,7 @@ class Player:
         for phi in np.arange(0, (2 * math.pi), (2 * math.pi) / phi_grid_size):
             for radius in radiuses_grid:
                 aiming_point = (radius * math.cos(phi), radius * math.sin(phi))
-                grid_probabilities[(radius, round(phi,4))] = self.probabilities(aiming_point)
+                grid_probabilities[aiming_point] = self.probabilities(aiming_point)
         return grid_probabilities
 
     def probabilities(self, aiming_point):
