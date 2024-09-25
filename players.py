@@ -63,7 +63,7 @@ class Player:
                         dy * (self.inv_sigma[1][0]*dx + self.inv_sigma[1][1]*dy))
         return np.exp(exponent)
 
-    def integrate_gaussian(self, mu, r_bounds, phi_bounds, rgridsize=50, phigridsize=50):
+    def integrate_gaussian(self, mu, r_bounds, phi_bounds, rgridsize=100, phigridsize=100):
         dr = (r_bounds[1] - r_bounds[0]) / rgridsize
         dphi = (phi_bounds[1] - phi_bounds[0]) / phigridsize
         

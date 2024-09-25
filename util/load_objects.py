@@ -1,6 +1,6 @@
 import os
 import pickle
-from find_filenames import find_strategy_filename, find_player_filename
+from util.find_filenames import find_strategy_filename, find_player_filename
 from strategies import GameStrategy
 
 

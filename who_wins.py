@@ -22,7 +22,7 @@ def prob_finish_n_turns(player, n_turn, points, mode='given'):
     strategy = GameStrategy(player=player, n_turns=n_turn, max_points=points, mode=mode).strategy
     return strategy[(n_turn, 3)][points]['probability']
 
-skill1 = 300
+skill1 = 400
 skill2 = 200
 player1 = Player(sigma=((skill1^2, 0), (0, skill1^2)))
 player2 = Player(sigma=((skill2^2, 0), (0, skill2^2)))
@@ -31,12 +31,16 @@ print("Players created")
 
 n_turns = 20
 points = 301
-strat_given = GameStrategy(player=player1, n_turns=n_turns, max_points=points, mode='optimal').strategy
+strat_given = GameStrategy(player=player1, n_turns=n_turns, max_points=points, mode='given').strategy
 print("Strategy1 created")
 
-strat_optimal = GameStrategy(player=player2, n_turns=n_turns, max_points=points, mode='given').strategy
+strat_optimal = GameStrategy(player=player2, n_turns=n_turns, max_points=points, mode='optimal').strategy
+strat_optimal_given = GameStrategy(player=player2, n_turns=n_turns, max_points=points, mode='given').strategy
 
 print("Strategies created")
 
 print(prob_first_wins(strat_given, strat_optimal))
 print(prob_first_wins(strat_optimal, strat_given))
+
+print(prob_first_wins(strat_given, strat_optimal_given))
+print(prob_first_wins(strat_optimal_given, strat_given))

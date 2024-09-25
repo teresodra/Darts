@@ -12,7 +12,7 @@ from kivy.uix.floatlayout import FloatLayout  # Import the FloatLayout
 from constants import positions, radiuses
 from players import Player
 from strategies import GameStrategy
-
+from kivy.uix.scrollview import ScrollView
 
 class Dartboard(Widget):
     def __init__(self,  **kwargs):
@@ -96,10 +96,13 @@ class DartboardApp(App):
         self.probability_label = Label(size_hint=(0.3, 0.1), pos_hint={'left': 1, 'top': 0.6})
         self.layout.add_widget(self.probability_label)
 
+        # Use ScrollView for input fields
+        scroll_view = ScrollView(size_hint=(0.3, 0.4), pos_hint={'right': 1, 'top': 1})
 
-        # Modify the layout for input boxes and move them to top right
-        self.input_layout = BoxLayout(orientation="vertical", size_hint=(0.3, 0.3), pos_hint={'right': 1, 'top': 1})
-        self.layout.add_widget(self.input_layout)
+        # Modify the layout for input boxes and move them to the top right
+        self.input_layout = BoxLayout(orientation="vertical", size_hint_y=None)
+        self.input_layout.bind(minimum_height=self.input_layout.setter('height'))
+        scroll_view.add_widget(self.input_layout)
 
         # Add labels and TextInput widgets for the required initial values
         self.starting_points_label, self.starting_points_input = self.add_label_and_input("Starting Points:")
@@ -111,6 +114,8 @@ class DartboardApp(App):
         btn.bind(on_press=self.initialize_dartboard)
         self.input_layout.add_widget(btn)
 
+        # Add the ScrollView to the layout
+        self.layout.add_widget(scroll_view)
         return self.layout
 
     def add_label_and_input(self, text):
@@ -197,7 +202,6 @@ class DartboardApp(App):
             self.probability = self.strategy[(self.turns_left, self.darts_left)][self.points_left]['probability']
             print(list(self.strategy.keys())[0])
             print(list(self.strategy[list(self.strategy.keys())[0]].keys()))
-            print(self.strategy[(2,2)])
             self.display_dartboard_with_aiming_point()
 
         else:
@@ -235,7 +239,7 @@ class DartboardApp(App):
         self.turns_left_label.text = f"Turns Left: {self.turns_left}"
         self.darts_left_label.text = f"Darts Left: {self.darts_left}"
         self.points_left_label.text = f"Points Left: {self.points_left}"
-        self.probability_label.text = f"You will finish with probability: {round(self.probability,2)}"
+        # self.probability_label.text = f"You will finish with probability: {round(self.probability,2)}"
 
 
 
