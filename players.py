@@ -20,7 +20,10 @@ class Player:
         if create_distribution:
             mean, sigma = self.create_distribution(points=points)
         self.sigma = sigma
+        print(self.sigma, "self.sigma")
         self.det_sigma = sigma[0][0]*sigma[1][1] - sigma[0][1]*sigma[1][0]
+        print(self.sigma, "self.sigma")
+        print(self.det_sigma, "self.detsingma")
         self.inv_sigma = (
             (sigma[1][1]/self.det_sigma, -sigma[0][1]/self.det_sigma), 
             (-sigma[1][0]/self.det_sigma, sigma[0][0]/self.det_sigma)

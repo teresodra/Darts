@@ -4,6 +4,7 @@ import numpy as np
 from given_strategy import give_strategy
 from players import Player
 from util.find_filenames import find_strategy_filename
+from util.heatmap import plot_heatmap_from_cartesian_data
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):
@@ -45,7 +46,6 @@ class GameStrategy:
         # Construct the full path
         folder = 'players'
         files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder, file))]
-        print(files)
         file_path = os.path.join('players', f'{file_name}.pkl')
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"No saved player found at {file_path}")
@@ -64,7 +64,6 @@ class GameStrategy:
 
         for i in range(len(values)):
             if points_left - values[i] > 1:
-                # print(points_left)
                 prob += prev_dart_prob[points_left - values[i]] * values_prob[i]
             elif values[i] == points_left and ((i >= 20 and i < 40) or i == 62):
                 prob += values_prob[i]
@@ -73,22 +72,31 @@ class GameStrategy:
 
         return prob
 
-    def grid_search_global_maximum(self, points_left, prev_dart_prob, prev_turn_prob):
+    def grid_search_global_maximum(self, points_left, prev_dart_prob, prev_turn_prob, heatmap=False):
         '''
         Perform a grid search on the dartboard to find an approximation of the global maximum.
         '''
         optimal_coordinate = None
         optimal_prob = 0
+        probability_dict = dict()
 
         for coordinate, probabilities in self.stored_probabilities.items():
             prob_n = self.prob_finish_given_probs(points_left, probabilities, prev_dart_prob, prev_turn_prob)
             if prob_n > optimal_prob:
                 optimal_prob = prob_n
                 optimal_coordinate = coordinate
+            if heatmap:
+                # Saving to create a heatmap
+                probability_dict[coordinate] = prob_n
+
+        if heatmap:
+
+            pass
+            # plot_heatmap_from_cartesian_data(probability_dict)
 
         return optimal_coordinate, optimal_prob
 
-    def one_dart_more_strategy_calculator(self, prev_dart_prob, prev_turn_prob):
+    def one_dart_more_strategy_calculator(self, prev_dart_prob, prev_turn_prob, heatmap=False):
         '''
         Calculate the strategy to maximize the probability of finishing
         with one dart more than prev_dart_prob.
@@ -102,7 +110,11 @@ class GameStrategy:
         probabilities = np.zeros(self.max_points + 1)
 
         for points_left in range(1, self.max_points + 1):
-            optimal_coordinate, optimal_prob = self.grid_search_global_maximum(points_left, prev_dart_prob, prev_turn_prob)
+            if points_left == self.max_points and heatmap:
+                my_heatmap = True
+            else:
+                my_heatmap = False
+            optimal_coordinate, optimal_prob = self.grid_search_global_maximum(points_left, prev_dart_prob, prev_turn_prob, heatmap=my_heatmap)
             best_strategy[points_left] = dict()
             best_strategy[points_left]['coordinates'] = optimal_coordinate
             best_strategy[points_left]['probability'] = optimal_prob
@@ -123,14 +135,18 @@ class GameStrategy:
         prev_dart_prob = np.zeros(self.max_points+1)
         prev_turn_prob = np.zeros(self.max_points+1)
 
+
         if mode == 'given':
             given_strategy = give_strategy(self.max_points)
 
         for turn in range(self.n_turns + 1):
             for darts_left in range(1, 3 + 1):
-                # print('darts', darts_left)
+                if turn == self.n_turns and darts_left == 3:
+                    heatmap = True
+                else:
+                    heatmap = False
                 if mode == 'optimal':
-                    strategy, new_prob = self.one_dart_more_strategy_calculator(prev_dart_prob, prev_turn_prob)
+                    strategy, new_prob = self.one_dart_more_strategy_calculator(prev_dart_prob, prev_turn_prob, heatmap=heatmap)
                 elif mode == 'given':
                     strategy, new_prob = self.add_probabilities(given_strategy, prev_dart_prob, prev_turn_prob)
                 else:

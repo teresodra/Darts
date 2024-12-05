@@ -84,25 +84,26 @@ class DartboardApp(App):
         self.layout = FloatLayout(size=(600, 600))
 
         # Labels to display turns, darts, and points left
-        self.turns_left_label = Label(size_hint=(0.3, 0.1), pos_hint={'left': 1, 'top': 0.9})
+        self.turns_left_label = Label(size_hint=(0.3, 0.1), pos_hint={'right': 0.75, 'top': 0.9})
         self.layout.add_widget(self.turns_left_label)
 
-        self.darts_left_label = Label(size_hint=(0.3, 0.1), pos_hint={'left': 1, 'top': 0.8})
+        self.darts_left_label = Label(size_hint=(0.3, 0.1), pos_hint={'right': 0.75, 'top': 0.8})
         self.layout.add_widget(self.darts_left_label)
 
-        self.points_left_label = Label(size_hint=(0.3, 0.1), pos_hint={'left': 1, 'top': 0.7})
+        self.points_left_label = Label(size_hint=(0.3, 0.1), pos_hint={'right': 0.75, 'top': 0.7})
         self.layout.add_widget(self.points_left_label)
 
-        self.probability_label = Label(size_hint=(0.3, 0.1), pos_hint={'left': 1, 'top': 0.6})
+        self.probability_label = Label(size_hint=(0.3, 0.1), pos_hint={'right': 0.75, 'top': 0.6})
         self.layout.add_widget(self.probability_label)
 
+
         # Use ScrollView for input fields
-        scroll_view = ScrollView(size_hint=(0.3, 0.4), pos_hint={'right': 1, 'top': 1})
+        self.scroll_view = ScrollView(size_hint=(0.3, 0.4), pos_hint={'right': 1, 'top': 1})
 
         # Modify the layout for input boxes and move them to the top right
         self.input_layout = BoxLayout(orientation="vertical", size_hint_y=None)
         self.input_layout.bind(minimum_height=self.input_layout.setter('height'))
-        scroll_view.add_widget(self.input_layout)
+        self.scroll_view.add_widget(self.input_layout)
 
         # Add labels and TextInput widgets for the required initial values
         self.starting_points_label, self.starting_points_input = self.add_label_and_input("Starting Points:")
@@ -115,7 +116,7 @@ class DartboardApp(App):
         self.input_layout.add_widget(btn)
 
         # Add the ScrollView to the layout
-        self.layout.add_widget(scroll_view)
+        self.layout.add_widget(self.scroll_view)
         return self.layout
 
     def add_label_and_input(self, text):
@@ -134,11 +135,13 @@ class DartboardApp(App):
             self.darts_left = 3
             self.points_scored = 0
 
-            self.skill = int(self.skill_input.text)
-            print('self.skill', self.skill, type(self.skill))
+            self.skill = float(self.skill_input.text)
+            sigma_skill = ((self.skill**2, 0), (0, self.skill**2))
+            print("SELF SKILL", self.skill)
+            print("SIGMASKILL", sigma_skill)
             # Placeholder for Player and GameStrategy classes. 
             # Uncomment and replace these lines with actual classes as per your setup.
-            self.player = Player(sigma=((self.skill^2, 0), (0, self.skill^2)))
+            self.player = Player(sigma=sigma_skill)
             self.strategy = GameStrategy(player=self.player, n_turns=self.turns_left, max_points=self.points_left).generating_strategy()
             self.game()
             self.update_stats()  # <-- Add this line here
@@ -147,7 +150,6 @@ class DartboardApp(App):
             self.layout.add_widget(label)
 
     def display_dartboard_with_aiming_point(self):
-        print(self.coordinates)
 
         # Remove existing dartboard and input layout if they exist
         if hasattr(self, 'dartboard'):
@@ -155,6 +157,9 @@ class DartboardApp(App):
 
         if hasattr(self, 'input_layout'):
             self.layout.remove_widget(self.input_layout)
+
+        if hasattr(self, 'scroll_view'):
+            self.layout.remove_widget(self.scroll_view)
 
         # Create or recreate the dartboard and add to layout
         self.dartboard = Dartboard(size=(500, 500), pos=(50, 50))
@@ -166,7 +171,6 @@ class DartboardApp(App):
             self.coordinates
             self.dartboard
             self.dartboard.my_mm
-            print(self.coordinates)
             Point(points=[self.dartboard.center_x + self.coordinates[0]*self.dartboard.my_mm,
                           self.dartboard.center_y + self.coordinates[1]*self.dartboard.my_mm],
                   pointsize=5)
@@ -181,8 +185,6 @@ class DartboardApp(App):
 
     def game(self, what = ''):
         # self.update_stats()
-        print('WHAT', what)
-        print('self.points_left', self.points_left)
         if self.points_left != 0:
             if self.darts_left == 0:
                 if self.turns_left == 0:
@@ -190,18 +192,14 @@ class DartboardApp(App):
                     self.layout.clear_widgets()
                     over_label = Label(text="You lost!")
                     self.layout.add_widget(over_label)
-                    print("PLAYER LOST")
                     return  # End the game method here
                 else:
                     self.points_previous_turn = self.points_left
                     self.turns_left -= 1
                     self.darts_left = 3
-            print(list(self.strategy.keys()))
 
             self.coordinates = self.strategy[(self.turns_left, self.darts_left)][self.points_left]['coordinates']
             self.probability = self.strategy[(self.turns_left, self.darts_left)][self.points_left]['probability']
-            print(list(self.strategy.keys())[0])
-            print(list(self.strategy[list(self.strategy.keys())[0]].keys()))
             self.display_dartboard_with_aiming_point()
 
         else:
@@ -226,7 +224,6 @@ class DartboardApp(App):
             return
         else:
             self.darts_left -= 1
-            print("self.points_left - self.points_scored", self.points_left, self.points_scored)
             if self.points_left - self.points_scored <= 1:
                 self.points_left = self.points_previous_turn
                 self.darts_left = 0
@@ -239,14 +236,13 @@ class DartboardApp(App):
         self.turns_left_label.text = f"Turns Left: {self.turns_left}"
         self.darts_left_label.text = f"Darts Left: {self.darts_left}"
         self.points_left_label.text = f"Points Left: {self.points_left}"
-        # self.probability_label.text = f"You will finish with probability: {round(self.probability,2)}"
+        self.probability_label.text = f"You will finish with probability: {round(self.probability,2)}"
 
 
 
     def handle_click(self, position):
         """Handle the user click on the dartboard."""
         self.clicked_position = position
-        print('position', self.clicked_position)
 
         if hasattr(self, 'dartboard'):
             self.dartboard.draw_point(self.clicked_position)
