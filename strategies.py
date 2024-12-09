@@ -91,8 +91,7 @@ class GameStrategy:
 
         if heatmap:
 
-            pass
-            # plot_heatmap_from_cartesian_data(probability_dict)
+            plot_heatmap_from_cartesian_data(probability_dict)
 
         return optimal_coordinate, optimal_prob
 

@@ -86,7 +86,7 @@ class Player:
         return integral
 
 
-    def generate_grid_probabilities(self, phi_grid_size=20, r_grid_size=2):
+    def generate_grid_probabilities(self, phi_grid_size=20, r_grid_size=5):
         if r_grid_size % 2 == 1:
             r_grid_size += 1
             # We want to ensure the grid is even so that the central points of the cells are a posibility
@@ -96,6 +96,7 @@ class Player:
         radiuses_grid = [(k * radiuses[i] + (r_grid_size-k) * radiuses[i+1])/r_grid_size
                          for k in range(r_grid_size+1)
                          for i in range(len(radiuses)-1)]
+        print(radiuses_grid, "radiuses_grid")
         # radiuses considered in the grid studied
         for phi in np.arange(0, (2 * math.pi), (2 * math.pi) / phi_grid_size):
             for radius in radiuses_grid:
@@ -126,7 +127,9 @@ class Player:
         p[61] = self.integrate_gaussian(mu, (radiuses[0], radiuses[1]), (0, 2 * np.pi))
         p[62] = self.integrate_gaussian(mu, (0, radiuses[0]), (0, 2 * np.pi))
 
+    
         p = p / np.sum(p)
+        
         return p
     
     def visual(self):
