@@ -5,6 +5,7 @@ from given_strategy import give_strategy
 from players import Player
 from util.find_filenames import find_strategy_filename
 from util.heatmap import plot_heatmap_from_cartesian_data
+from constants import values
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):
@@ -56,16 +57,14 @@ class GameStrategy:
 
     def prob_finish_given_probs(self, points_left, values_prob, prev_dart_prob, turn_initial_prob):
         '''
-        Calculate the probability of finishing in one dart more than prev_dart_prob if we aim for the point P
-        on the dartboard when we have 'points_left' points to go and darts_left darts left.
+        Calculate the probability of finishing in one dart more than prev_dart_prob if we aim for the point P.
         '''
-        values = list(range(1, 21)) + list(range(2, 41, 2)) + list(range(3, 61, 3)) + [0, 25, 50]
         prob = 0
 
-        for i in range(len(values)):
-            if points_left - values[i] > 1:
-                prob += prev_dart_prob[points_left - values[i]] * values_prob[i]
-            elif values[i] == points_left and ((i >= 20 and i < 40) or i == 62):
+        for i, value in enumerate(values):
+            if points_left - value > 1:
+                prob += prev_dart_prob[points_left - value] * values_prob[i]
+            elif value == points_left and ((i >= 20 and i < 40) or i == 62):
                 prob += values_prob[i]
             else:
                 prob += turn_initial_prob[points_left] * values_prob[i]

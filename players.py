@@ -119,13 +119,13 @@ class Player:
             phimax = (ipos + 0.5) * np.pi / 10
 
             p[i] = (self.integrate_gaussian(mu, (radiuses[1], radiuses[2]), (phimin, phimax)) +
-                    self.integrate_gaussian(mu, (radiuses[3], radiuses[4]), (phimin, phimax)))
-            p[20 + i] = self.integrate_gaussian(mu, (radiuses[4], radiuses[5]), (phimin, phimax))
-            p[40 + i] = self.integrate_gaussian(mu, (radiuses[2], radiuses[3]), (phimin, phimax))
+                    self.integrate_gaussian(mu, (radiuses[3], radiuses[4]), (phimin, phimax)))    # single
+            p[20 + i] = self.integrate_gaussian(mu, (radiuses[4], radiuses[5]), (phimin, phimax)) # double
+            p[40 + i] = self.integrate_gaussian(mu, (radiuses[2], radiuses[3]), (phimin, phimax)) # triple
 
-        p[60] = self.integrate_gaussian(mu, (radiuses[5], radiuses[6]), (0, 2 * np.pi))
-        p[61] = self.integrate_gaussian(mu, (radiuses[0], radiuses[1]), (0, 2 * np.pi))
-        p[62] = self.integrate_gaussian(mu, (0, radiuses[0]), (0, 2 * np.pi))
+        p[60] = self.integrate_gaussian(mu, (radiuses[5], radiuses[6]), (0, 2 * np.pi)) # out
+        p[61] = self.integrate_gaussian(mu, (radiuses[0], radiuses[1]), (0, 2 * np.pi)) # bullseye
+        p[62] = self.integrate_gaussian(mu, (0, radiuses[0]), (0, 2 * np.pi))           # double bullseye
 
     
         p = p / np.sum(p)

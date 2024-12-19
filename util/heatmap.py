@@ -60,7 +60,7 @@ def plot_heatmap_from_cartesian_data(data, radiuses=radiuses):
     plt.ylim(-max_radius, max_radius)
 
     # Finalize plot
-    plt.title('Heatmap of Probabilities with Circles and Rays')
+    plt.title('Heatmap of Probabilities')
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.gca().set_aspect('equal', adjustable='box')
