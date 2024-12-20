@@ -5,7 +5,7 @@ from given_strategy import give_strategy
 from players import Player
 from util.find_filenames import find_strategy_filename
 from util.heatmap import plot_heatmap_from_cartesian_data
-from constants import values
+from constants import cells
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):
@@ -61,13 +61,13 @@ class GameStrategy:
         '''
         prob = 0
 
-        for i, value in enumerate(values):
-            if points_left - value > 1:
-                prob += prev_dart_prob[points_left - value] * values_prob[i]
-            elif value == points_left and ((i >= 20 and i < 40) or i == 62):
-                prob += values_prob[i]
+        for cell_name, cell in cells.items():
+            if points_left - cell.value > 1:
+                prob += prev_dart_prob[points_left - cell.value] * values_prob[cell_name]
+            elif cell.value == points_left and cell.finish == True:
+                prob += values_prob[cell_name]
             else:
-                prob += turn_initial_prob[points_left] * values_prob[i]
+                prob += turn_initial_prob[points_left] * values_prob[cell_name]
 
         return prob
 

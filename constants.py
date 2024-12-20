@@ -7,10 +7,6 @@ radiuses = [6.35, 16, 99, 107, 162, 170, 220]
 positions = [6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19, 3, 17, 2, 15, 10]
 # position of numbers in the dartboard
 
-
-values = list(range(1, 21)) + list(range(2, 41, 2)) + list(range(3, 61, 3)) + [0, 25, 50]
-# values in the dartboard
-
     
 
 
@@ -26,9 +22,9 @@ for n in range(1, 21):
         regions_double = [Region(radiuses[4], radiuses[5], phimin, phimax)]
         regions_triple = [Region(radiuses[2], radiuses[3], phimin, phimax)]
 
-        cells["single" + str(n)] = Cell(values[n], regions_single, False)
-        cells["double" + str(n)] = Cell(values[n] * 2, regions_double, True)
-        cells["triple" + str(n)] = Cell(values[n] * 3, regions_triple, False)
+        cells["single_" + str(n)] = Cell(n, regions_single, False)
+        cells["double_" + str(n)] = Cell(n * 2, regions_double, True)
+        cells["triple_" + str(n)] = Cell(n * 3, regions_triple, False)
 cells["out"] = Cell(0, [Region(radiuses[5], radiuses[6], 0, 2 * np.pi)], False)
 cells["bullseye"] = Cell(25, [Region(radiuses[0], radiuses[1], 0, 2 * np.pi)], False)
 cells["double_bullseye"] = Cell(50, [Region(0, radiuses[0], 0, 2 * np.pi)], True)

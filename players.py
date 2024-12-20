@@ -2,7 +2,8 @@ import os
 import pickle
 import math
 import numpy as np
-from constants import radiuses, positions
+from constants import radiuses, positions, cells
+from util.integrate import integrate_gaussian_in_sector_region
 
 from scipy.stats import chi2
 import numpy.linalg as linalg
@@ -59,32 +60,6 @@ class Player:
 
         return mean, sigma
 
-    def gaussian(self, x, y, mu):
-        dx = x - mu[0]
-        dy = y - mu[1]
-        exponent = -0.5 * (dx * (self.inv_sigma[0][0]*dx + self.inv_sigma[0][1]*dy) +
-                        dy * (self.inv_sigma[1][0]*dx + self.inv_sigma[1][1]*dy))
-        return np.exp(exponent)
-
-    def integrate_gaussian(self, mu, r_bounds, phi_bounds, rgridsize=100, phigridsize=100):
-        dr = (r_bounds[1] - r_bounds[0]) / rgridsize
-        dphi = (phi_bounds[1] - phi_bounds[0]) / phigridsize
-        
-        r_values = np.arange(r_bounds[0], r_bounds[1], dr)
-        phi_values = np.arange(phi_bounds[0], phi_bounds[1], dphi)
-
-        r, phi = np.meshgrid(r_values, phi_values, indexing='ij')
-        x = r * np.cos(phi)
-        y = r * np.sin(phi)
-        
-        # Compute gaussian values for all x and y
-        gauss_values = self.gaussian(x, y, mu)
-        
-        # Compute the integral using the trapezoid rule
-        integral = np.sum(gauss_values * r * dr * dphi) / (2 * np.pi * np.sqrt(self.det_sigma))
-        
-        return integral
-
 
     def generate_grid_probabilities(self, phi_grid_size=20, r_grid_size=5):
         if r_grid_size % 2 == 1:
@@ -107,28 +82,20 @@ class Player:
     def probabilities(self, aiming_point):
         '''
         Calculate the probability of hitting every part of the dartboard when aiming for aiming_point
-        and following the distribution D. The returned vector contains the probabilities of hitting 1-20
-        (first 20 positions), hitting double 1-20 (20-39 positions), hitting triple 1-20 (40-59 positions),
-        missing (60), hitting bullseye (61), and double bullseye (62).
+        and following the distribution D. The returned dictionary contains the probabilities of hitting each cell.
         ''' 
         mu = tuple(a + b for a, b in zip(aiming_point, self.mean))
-        p = np.zeros(63)
-        for i in range(20):
-            ipos = positions.index(i + 1)
-            phimin = (ipos - 0.5) * np.pi / 10
-            phimax = (ipos + 0.5) * np.pi / 10
-
-            p[i] = (self.integrate_gaussian(mu, (radiuses[1], radiuses[2]), (phimin, phimax)) +
-                    self.integrate_gaussian(mu, (radiuses[3], radiuses[4]), (phimin, phimax)))    # single
-            p[20 + i] = self.integrate_gaussian(mu, (radiuses[4], radiuses[5]), (phimin, phimax)) # double
-            p[40 + i] = self.integrate_gaussian(mu, (radiuses[2], radiuses[3]), (phimin, phimax)) # triple
-
-        p[60] = self.integrate_gaussian(mu, (radiuses[5], radiuses[6]), (0, 2 * np.pi)) # out
-        p[61] = self.integrate_gaussian(mu, (radiuses[0], radiuses[1]), (0, 2 * np.pi)) # bullseye
-        p[62] = self.integrate_gaussian(mu, (0, radiuses[0]), (0, 2 * np.pi))           # double bullseye
-
-    
-        p = p / np.sum(p)
+        p = dict()
+        for cell_name, cell in cells.items():
+            p[cell_name] = 0
+            for region in cell.regions:
+                p[cell_name] += integrate_gaussian_in_sector_region(aiming_point=aiming_point,
+                                                                    player=self,
+                                                                    region=region)
+        # sum all values of p and standarise them to add to 1        
+        sum_p = sum(p.values())
+        for cell_name in p:
+            p[cell_name] = p[cell_name] / sum_p
         
         return p
     

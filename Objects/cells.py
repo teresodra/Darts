@@ -1,13 +1,13 @@
 
 
 class Cell:
-    """Contain the value of the cell, the locations that take you to this cell and whether one can finish by hitting this cell or not."""
+    """Contain the value of the cell, the regions that take you to this cell and whether one can finish by hitting this cell or not."""
     def __init__(self,
                  value:int,
-                 locations:list,
+                 regions:list,
                  finish:bool):
         self.value = value
-        self.locations = locations
+        self.regions = regions
         self.finish = finish
 
 
