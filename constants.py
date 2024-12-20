@@ -1,4 +1,5 @@
-
+from Objects.cells import Cell, Region
+import numpy as np
 # NORMAL DARTBOARD
 
 radiuses = [6.35, 16, 99, 107, 162, 170, 220]
@@ -14,18 +15,20 @@ values = list(range(1, 21)) + list(range(2, 41, 2)) + list(range(3, 61, 3)) + [0
 
 
 # will include a dictionary of the different possible values, where one 
-cells = []
+cells = dict()
 # algo asi para las celdas
-        # for i in range(20):
-        #     ipos = positions.index(i + 1)
-        #     phimin = (ipos - 0.5) * np.pi / 10
-        #     phimax = (ipos + 0.5) * np.pi / 10
+for n in range(1, 21):
+        npos = positions.index(n)
+        phimin = (npos - 0.5) * np.pi / 10
+        phimax = (npos + 0.5) * np.pi / 10
 
-        #     p[i] = (self.integrate_gaussian(mu, (radiuses[1], radiuses[2]), (phimin, phimax)) +
-        #             self.integrate_gaussian(mu, (radiuses[3], radiuses[4]), (phimin, phimax)))    # single
-        #     p[20 + i] = self.integrate_gaussian(mu, (radiuses[4], radiuses[5]), (phimin, phimax)) # double
-        #     p[40 + i] = self.integrate_gaussian(mu, (radiuses[2], radiuses[3]), (phimin, phimax)) # triple
+        regions_single = [Region(radiuses[1], radiuses[2], phimin, phimax), Region(radiuses[3], radiuses[4], phimin, phimax)]
+        regions_double = [Region(radiuses[4], radiuses[5], phimin, phimax)]
+        regions_triple = [Region(radiuses[2], radiuses[3], phimin, phimax)]
 
-        # p[60] = self.integrate_gaussian(mu, (radiuses[5], radiuses[6]), (0, 2 * np.pi)) # out
-        # p[61] = self.integrate_gaussian(mu, (radiuses[0], radiuses[1]), (0, 2 * np.pi)) # bullseye
-        # p[62] = self.integrate_gaussian(mu, (0, radiuses[0]), (0, 2 * np.pi))           # double bullseye
+        cells["single" + str(n)] = Cell(values[n], regions_single, False)
+        cells["double" + str(n)] = Cell(values[n] * 2, regions_double, True)
+        cells["triple" + str(n)] = Cell(values[n] * 3, regions_triple, False)
+cells["out"] = Cell(0, [Region(radiuses[5], radiuses[6], 0, 2 * np.pi)], False)
+cells["bullseye"] = Cell(25, [Region(radiuses[0], radiuses[1], 0, 2 * np.pi)], False)
+cells["double_bullseye"] = Cell(50, [Region(0, radiuses[0], 0, 2 * np.pi)], True)

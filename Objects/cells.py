@@ -11,8 +11,8 @@ class Cell:
         self.finish = finish
 
 
-class Location:
-    """Contains the locations of the cell"""
+class Region:
+    """Contains the regions of the cell"""
     def __init__(self,
                  min_r:float,
                  max_r:float,
@@ -20,3 +20,6 @@ class Location:
                  max_phi:float
                  ):
         self.min_phi = min_phi
+        self.max_phi = max_phi
+        self.min_r = min_r
+        self.max_r = max_r
