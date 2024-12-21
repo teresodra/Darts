@@ -62,18 +62,19 @@ class Player:
 
 
     def generate_grid_probabilities(self, phi_grid_size=20, r_grid_size=5):
-        if r_grid_size % 2 == 1:
+        if r_grid_size % 2 == 0:
             r_grid_size += 1
-            # We want to ensure the grid is even so that the central points of the cells are a posibility
+            # We want to ensure the grid is odd so that the central points of the cells are a posibility
         grid_probabilities = dict()
         grid_probabilities[(0,0)] = self.probabilities((0, 0))
 
         radiuses_grid = [(k * radiuses[i] + (r_grid_size-k) * radiuses[i+1])/r_grid_size
-                         for k in range(r_grid_size+1)
+                         for k in range(r_grid_size)
                          for i in range(len(radiuses)-1)]
-        print(radiuses_grid, "radiuses_grid")
         # radiuses considered in the grid studied
-        for phi in np.arange(0, (2 * math.pi), (2 * math.pi) / phi_grid_size):
+        phi_grid = np.arange(0, (2 * math.pi), (2 * math.pi) / phi_grid_size)
+
+        for phi in phi_grid:
             for radius in radiuses_grid:
                 aiming_point = (radius * math.cos(phi), radius * math.sin(phi))
                 grid_probabilities[aiming_point] = self.probabilities(aiming_point)
@@ -84,7 +85,7 @@ class Player:
         Calculate the probability of hitting every part of the dartboard when aiming for aiming_point
         and following the distribution D. The returned dictionary contains the probabilities of hitting each cell.
         ''' 
-        mu = tuple(a + b for a, b in zip(aiming_point, self.mean))
+        mu = tuple(a + b for a, b in zip(aiming_point, self.mean)) # TODO are these multiples??
         p = dict()
         for cell_name, cell in cells.items():
             p[cell_name] = 0
