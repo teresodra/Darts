@@ -95,7 +95,13 @@ class Player:
         # sum all values of p and standarise them to add to 1        
         sum_p = sum(p.values())
         print(p["out"], "p_out")
+        print(p["out_not_considered"], "p_out_not_considered")
         print(sum_p, "sum_p")
+        if sum_p < 0.5:
+            print(aiming_point, "aiming_point")
+            for cell_name in p:
+                print(cell_name, p[cell_name])
+            f =dfa
         for cell_name in p:
             p[cell_name] = p[cell_name] / sum_p
         

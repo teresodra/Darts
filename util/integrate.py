@@ -1,5 +1,5 @@
 import numpy as np
-from Objects.cells import Cell, Region
+from Objects.cells import Region
 
 def gaussian(x, y, mu, inv_sigma):
     dx = x - mu[0]
@@ -13,6 +13,8 @@ def integrate_gaussian_in_sector_region(aiming_point:tuple,
                                         region:Region,
                                         rgridsize=100,
                                         phigridsize=100):
+    if region.max_r == 300 and aiming_point == (220, 0):
+        pass
     dr = (region.max_r - region.min_r) / rgridsize
     dphi = (region.max_phi - region.min_phi) / phigridsize
     
@@ -23,12 +25,12 @@ def integrate_gaussian_in_sector_region(aiming_point:tuple,
     x = r * np.cos(phi)
     y = r * np.sin(phi)
 
-    mu = aiming_point + player.mean
+    mu = tuple(a + b for a, b in zip(aiming_point, player.mean))
     
     # Compute gaussian values for all x and y
     gauss_values = gaussian(x, y, mu, player.inv_sigma)
     
     # Compute the integral using the trapezoid rule
-    integral = np.sum(gauss_values * r * dr * dphi) # as we standarise later this does not matter / (2 * np.pi * np.sqrt(player.det_sigma))
+    integral = np.sum(gauss_values * r * dr * dphi) / (2 * np.pi * np.sqrt(player.det_sigma))
     
     return integral
