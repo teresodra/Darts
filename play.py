@@ -15,7 +15,7 @@ def run_this_fast():
     # skill = int(input("What is your skill level?(1-50)\n 1->Master of darts \n 50->Sometimes I hit the dartboard \n For reference, someone with skill 20 hits the desired double cell one out of 8 times."))
 
     starting_points = 40
-    n_turns = 3
+    n_turns = 1
     skill = 200
     mode = 'optimal'
     # mode = 'given'
@@ -24,7 +24,7 @@ def run_this_fast():
 
     print(f"Wait for {starting_points * n_turns * 3 * 6 / 60} minutes")  # in seconds: number of points to calculate, number of turns, 3 darts, 6 seconds for each
 
-    player = Player(create_distribution=True)
+    player = Player(create_distribution=False)
     game_strategy = GameStrategy(player, n_turns=n_turns, max_points=starting_points, mode=mode)
     best_strategy_stored = game_strategy.strategy
 

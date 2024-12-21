@@ -70,7 +70,7 @@ class Player:
 
         radiuses_grid = [(k * radiuses[i] + (r_grid_size-k) * radiuses[i+1])/r_grid_size
                          for k in range(r_grid_size)
-                         for i in range(len(radiuses)-1)]
+                         for i in range(len(radiuses)-2)] # we dont consider points in the outermost circle
         # radiuses considered in the grid studied
         phi_grid = np.arange(0, (2 * math.pi), (2 * math.pi) / phi_grid_size)
 
@@ -85,7 +85,6 @@ class Player:
         Calculate the probability of hitting every part of the dartboard when aiming for aiming_point
         and following the distribution D. The returned dictionary contains the probabilities of hitting each cell.
         ''' 
-        mu = tuple(a + b for a, b in zip(aiming_point, self.mean)) # TODO are these multiples??
         p = dict()
         for cell_name, cell in cells.items():
             p[cell_name] = 0
@@ -95,6 +94,8 @@ class Player:
                                                                     region=region)
         # sum all values of p and standarise them to add to 1        
         sum_p = sum(p.values())
+        print(p["out"], "p_out")
+        print(sum_p, "sum_p")
         for cell_name in p:
             p[cell_name] = p[cell_name] / sum_p
         
