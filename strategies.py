@@ -3,7 +3,6 @@ import pickle
 import numpy as np
 from given_strategy import give_strategy
 from players import Player
-from util.find_filenames import find_strategy_filename
 from util.heatmap import plot_heatmap_from_cartesian_data
 from constants import cells
 
@@ -26,15 +25,6 @@ class GameStrategy:
         self.max_points = max_points
         self.stored_probabilities = self.player.grid_probabilities
         self.heatmap_already_plotted = False
-
-        self.strategy = self.generating_strategy(mode=mode)
-        filename = find_strategy_filename(self.player.name, max_points, mode)
-        # Create the 'strategies' directory if it doesn't exist
-        if not os.path.exists('strategies'):
-            os.makedirs('strategies')
-        # Save the strategy to a file
-        with open(filename, 'wb') as file:
-            pickle.dump(self.strategy, file)
 
 
     def load_player(self, file_name):

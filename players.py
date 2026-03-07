@@ -104,6 +104,8 @@ if __name__ == '__main__':
     # game = GameStrategy(player, n_turns=3, max_points=101)
     for i in range(1, 101):
         j = float(i)
-        Player(skill=j)
-
+        my_player = Player(skill=j)
+        probabilities_aiming_centre = my_player.probabilities((0,0))
+        prob_bullseye = probabilities_aiming_centre['bullseye'] + probabilities_aiming_centre['double_bullseye']
+        print(f'Skill: {j}, Probability of hitting the bullseye when aiming for the centre: {prob_bullseye}')
 
