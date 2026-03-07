@@ -1,7 +1,6 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Ellipse, Line, Point
-from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from math import pi, sin, cos
 from kivy.uix.button import Button

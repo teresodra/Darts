@@ -25,9 +25,14 @@ class GameStrategy:
         self.n_turns = n_turns
         self.max_points = max_points
         self.stored_probabilities = self.player.grid_probabilities
+        self.heatmap_already_plotted = False
 
         self.strategy = self.generating_strategy(mode=mode)
         filename = find_strategy_filename(self.player.name, max_points, mode)
+        # Create the 'strategies' directory if it doesn't exist
+        if not os.path.exists('strategies'):
+            os.makedirs('strategies')
+        # Save the strategy to a file
         with open(filename, 'wb') as file:
             pickle.dump(self.strategy, file)
 
@@ -77,9 +82,9 @@ class GameStrategy:
                 # Saving to create a heatmap
                 probability_dict[coordinate] = prob_n
 
-        if heatmap:
-
+        if heatmap and self.heatmap_already_plotted == False:
             plot_heatmap_from_cartesian_data(probability_dict)
+            self.heatmap_already_plotted = True
 
         return optimal_coordinate, optimal_prob
 
