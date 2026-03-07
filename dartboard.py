@@ -17,6 +17,8 @@ from strategies import GameStrategy
 # Open window maximized
 Window.maximize()
 
+font_size = 34
+
 
 class Dartboard(Widget):
     def __init__(self, **kwargs):
@@ -64,7 +66,7 @@ class Dartboard(Widget):
                 text=str(number),
                 size_hint=(None, None),
                 size=(50, 50),
-                font_size=28,
+                font_size=font_size * 1.2,
             )
             label.pos = (
                 center_x + r * cos(angle) - label.width * 0.5,
@@ -96,28 +98,28 @@ class DartboardApp(App):
         self.turns_left_label = Label(
             size_hint=(0.3, 0.1),
             pos_hint={"right": 0.75, "top": 0.92},
-            font_size=24,
+            font_size=font_size,
         )
         self.layout.add_widget(self.turns_left_label)
 
         self.darts_left_label = Label(
             size_hint=(0.3, 0.1),
             pos_hint={"right": 0.75, "top": 0.84},
-            font_size=24,
+            font_size=font_size,
         )
         self.layout.add_widget(self.darts_left_label)
 
         self.points_left_label = Label(
             size_hint=(0.3, 0.1),
             pos_hint={"right": 0.75, "top": 0.76},
-            font_size=24,
+            font_size=font_size,
         )
         self.layout.add_widget(self.points_left_label)
 
         self.probability_label = Label(
             size_hint=(0.3, 0.1),
             pos_hint={"right": 0.75, "top": 0.68},
-            font_size=22,
+            font_size=font_size,
         )
         self.layout.add_widget(self.probability_label)
 
@@ -144,7 +146,7 @@ class DartboardApp(App):
             text="Submit",
             size_hint_y=None,
             height=60,
-            font_size=24,
+            font_size=font_size,
         )
         btn.bind(on_press=self.initialize_dartboard)
         self.input_layout.add_widget(btn)
@@ -158,7 +160,7 @@ class DartboardApp(App):
             text=text,
             size_hint_y=None,
             height=60,
-            font_size=24,
+            font_size=font_size,
         )
         self.input_layout.add_widget(label)
 
@@ -166,7 +168,7 @@ class DartboardApp(App):
             multiline=False,
             size_hint_y=None,
             height=60,
-            font_size=24,
+            font_size=font_size,
         )
         self.input_layout.add_widget(text_input)
 
@@ -195,7 +197,7 @@ class DartboardApp(App):
         except ValueError:
             label = Label(
                 text="Please enter valid values!",
-                font_size=24,
+                font_size=font_size,
                 size_hint=(0.5, 0.1),
                 pos_hint={"center_x": 0.5, "center_y": 0.5},
             )
@@ -214,7 +216,7 @@ class DartboardApp(App):
             self.layout.remove_widget(self.input_layout)
 
         # Create dartboard
-        self.dartboard = Dartboard(size=(700, 700), pos=(50, 50))
+        self.dartboard = Dartboard(size=(1100, 1100), pos=(100, 100))
         self.layout.add_widget(self.dartboard)
 
         # Draw aiming point
@@ -242,7 +244,7 @@ class DartboardApp(App):
 
         score_btn = Button(
             text="Submit Score",
-            font_size=24,
+            font_size=font_size,
             size_hint_y=None,
             height=60,
         )
@@ -256,7 +258,7 @@ class DartboardApp(App):
             if self.darts_left == 0:
                 if self.turns_left == 0:
                     self.layout.clear_widgets()
-                    over_label = Label(text="You lost!", font_size=32)
+                    over_label = Label(text="You lost!", font_size=font_size * 1.5)
                     self.layout.add_widget(over_label)
                     return
                 else:
@@ -278,7 +280,7 @@ class DartboardApp(App):
 
         else:
             self.layout.clear_widgets()
-            win_label = Label(text="Congratulations! You've won!", font_size=32)
+            win_label = Label(text="Congratulations! You've won!", font_size=font_size * 1.5)
             self.layout.add_widget(win_label)
 
     def update_game(self, instance):
@@ -287,7 +289,7 @@ class DartboardApp(App):
         except ValueError:
             error_label = Label(
                 text="Please enter a valid score!",
-                font_size=24,
+                font_size=font_size,
                 size_hint=(0.5, 0.1),
                 pos_hint={"center_x": 0.5, "center_y": 0.08},
             )
@@ -298,7 +300,7 @@ class DartboardApp(App):
             self.layout.clear_widgets()
             win_label = Label(
                 text="Congratulations! You've won!",
-                font_size=32,
+                font_size=font_size * 1.5,
             )
             self.layout.add_widget(win_label)
             return

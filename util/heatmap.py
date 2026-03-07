@@ -30,8 +30,11 @@ def plot_heatmap_from_cartesian_data(data, radiuses=radiuses):
     grid_z = griddata((x, y), probabilities, (grid_x, grid_y), method='cubic')
 
     # Plot the heatmap
+    plt.figure(figsize=(15, 15))
     plt.imshow(grid_z.T, extent=(min(x), max(x), min(y), max(y)), origin='lower', cmap='viridis')
-    plt.colorbar(label='Probability')
+    cbar = plt.colorbar()
+    cbar.set_label('Probability', fontsize=38)
+    cbar.ax.tick_params(labelsize=24)
 
     # Add circular lines at specified radii
     if radiuses:
@@ -56,12 +59,10 @@ def plot_heatmap_from_cartesian_data(data, radiuses=radiuses):
 
     # Adjust axis limits to ensure all circles and rays are visible
     max_radius = max(radiuses) if radiuses else max(max(x), max(y))
-    plt.xlim(-max_radius, max_radius)
-    plt.ylim(-max_radius, max_radius)
+    plt.xlim(-max_radius/2, max_radius/2)
+    plt.ylim(-max_radius/2, max_radius/2)
 
-    # Finalize plot
-    plt.title('Heatmap of Probabilities')
-    plt.xlabel('X')
-    plt.ylabel('Y')
+    plt.title('Heatmap of Probabilities of winning depending on aiming point', fontsize=30)
     plt.gca().set_aspect('equal', adjustable='box')
+    plt.tight_layout()
     plt.show()
