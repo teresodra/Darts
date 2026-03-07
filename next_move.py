@@ -1,6 +1,3 @@
-import os
-import pickle
-from util.find_filenames import find_strategy_filename
 from players import Player
 from strategies import GameStrategy
 from util.load_objects import load_strategy

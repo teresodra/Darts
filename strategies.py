@@ -26,17 +26,6 @@ class GameStrategy:
         self.max_points = max_points
         self.stored_probabilities = self.player.grid_probabilities
 
-        # strategy_exists = False
-        # # List all files in the folder
-        # for filename in os.listdir('strategies'):
-        #     # Check if file starts with the player's name and has enough points
-        #     if filename.startswith(f"{self.player_name}-") and int(filename.split('-')[1].split('.')[0]) >= max_points:
-        #         strategy_exists = True
-        #         # if it does, we copy this strategy
-        #         with open(filename, 'rb') as file:
-        #             self.strategy = pickle.load(file)
-        # if not strategy_exists:
-
         self.strategy = self.generating_strategy(mode=mode)
         filename = find_strategy_filename(self.player.name, max_points, mode)
         with open(filename, 'wb') as file:
