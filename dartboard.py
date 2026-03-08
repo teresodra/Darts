@@ -8,7 +8,6 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 
 from constants import positions, radiuses
 from players import Player
@@ -17,7 +16,9 @@ from strategies import GameStrategy
 # Open window maximized
 Window.maximize()
 
-font_size = 34
+font_size = 50
+input_height = 110
+button_height = 110
 
 
 class Dartboard(Widget):
@@ -25,12 +26,10 @@ class Dartboard(Widget):
         super(Dartboard, self).__init__(**kwargs)
         self.last_point = None
 
-        # Define colors
         black = (0, 0, 0)
         white = (1, 1, 1)
         green = (0, 0.5, 0)
 
-        # Use explicit center based on widget size/position
         center_x = self.x + self.width / 2
         center_y = self.y + self.height / 2
 
@@ -65,7 +64,7 @@ class Dartboard(Widget):
             label = Label(
                 text=str(number),
                 size_hint=(None, None),
-                size=(50, 50),
+                size=(80, 80),
                 font_size=font_size * 1.2,
             )
             label.pos = (
@@ -81,13 +80,12 @@ class Dartboard(Widget):
         return super(Dartboard, self).on_touch_down(touch)
 
     def draw_point(self, position):
-        """Draws a point at the given position on the dartboard."""
         if self.last_point:
             self.canvas.remove(self.last_point)
 
         with self.canvas:
             Color(1, 0, 0)
-            self.last_point = Point(points=[position[0], position[1]], pointsize=8)
+            self.last_point = Point(points=[position[0], position[1]], pointsize=10)
 
 
 class DartboardApp(App):
@@ -123,20 +121,14 @@ class DartboardApp(App):
         )
         self.layout.add_widget(self.probability_label)
 
-        # Scrollable input section
-        self.scroll_view = ScrollView(
-            size_hint=(0.3, 0.4),
-            pos_hint={"right": 1, "top": 1},
-        )
-
+        # Bigger fixed input section on the top right
         self.input_layout = BoxLayout(
             orientation="vertical",
-            size_hint_y=None,
-            spacing=10,
-            padding=10,
+            size_hint=(0.40, 0.78),
+            pos_hint={"right": 1, "y": 0.02},
+            spacing=20,
+            padding=20,
         )
-        self.input_layout.bind(minimum_height=self.input_layout.setter("height"))
-        self.scroll_view.add_widget(self.input_layout)
 
         self.starting_points_label, self.starting_points_input = self.add_label_and_input("Starting Points:")
         self.n_turns_label, self.n_turns_input = self.add_label_and_input("No. of Turns:")
@@ -145,21 +137,20 @@ class DartboardApp(App):
         btn = Button(
             text="Submit",
             size_hint_y=None,
-            height=60,
+            height=button_height,
             font_size=font_size,
         )
         btn.bind(on_press=self.initialize_dartboard)
         self.input_layout.add_widget(btn)
 
-        self.layout.add_widget(self.scroll_view)
+        self.layout.add_widget(self.input_layout)
         return self.layout
 
     def add_label_and_input(self, text):
-        """Utility function to add a Label and TextInput widget."""
         label = Label(
             text=text,
             size_hint_y=None,
-            height=60,
+            height=input_height,
             font_size=font_size,
         )
         self.input_layout.add_widget(label)
@@ -167,8 +158,9 @@ class DartboardApp(App):
         text_input = TextInput(
             multiline=False,
             size_hint_y=None,
-            height=60,
+            height=input_height,
             font_size=font_size,
+            padding=[20, 20, 20, 20],
         )
         self.input_layout.add_widget(text_input)
 
@@ -198,19 +190,14 @@ class DartboardApp(App):
             label = Label(
                 text="Please enter valid values!",
                 font_size=font_size,
-                size_hint=(0.5, 0.1),
+                size_hint=(0.6, 0.1),
                 pos_hint={"center_x": 0.5, "center_y": 0.5},
             )
             self.layout.add_widget(label)
 
     def display_dartboard_with_aiming_point(self):
-        # Remove old dartboard
         if hasattr(self, "dartboard"):
             self.layout.remove_widget(self.dartboard)
-
-        # Remove old input UI
-        if hasattr(self, "scroll_view"):
-            self.layout.remove_widget(self.scroll_view)
 
         if hasattr(self, "input_layout"):
             self.layout.remove_widget(self.input_layout)
@@ -222,22 +209,21 @@ class DartboardApp(App):
         # Draw aiming point
         with self.dartboard.canvas:
             Color(1, 0, 0)
-            self.coordinates
             Point(
                 points=[
                     self.dartboard.center_x + self.coordinates[0] * self.dartboard.my_mm,
                     self.dartboard.center_y + self.coordinates[1] * self.dartboard.my_mm,
                 ],
-                pointsize=8,
+                pointsize=10,
             )
 
-        # Score input on the right
+        # Bigger score input on the right
         self.input_layout = BoxLayout(
             orientation="vertical",
-            size_hint=(0.3, 0.25),
-            pos_hint={"right": 1, "top": 1},
-            spacing=10,
-            padding=10,
+            size_hint=(0.40, 0.34),
+            pos_hint={"right": 1, "y": 0.02},
+            spacing=20,
+            padding=20,
         )
 
         self.score_input = self.add_label_and_input("Enter points scored:")[1]
@@ -246,7 +232,7 @@ class DartboardApp(App):
             text="Submit Score",
             font_size=font_size,
             size_hint_y=None,
-            height=60,
+            height=button_height,
         )
         score_btn.bind(on_press=self.update_game)
         self.input_layout.add_widget(score_btn)
@@ -280,7 +266,10 @@ class DartboardApp(App):
 
         else:
             self.layout.clear_widgets()
-            win_label = Label(text="Congratulations! You've won!", font_size=font_size * 1.5)
+            win_label = Label(
+                text="Congratulations! You've won!",
+                font_size=font_size * 1.5,
+            )
             self.layout.add_widget(win_label)
 
     def update_game(self, instance):
@@ -290,7 +279,7 @@ class DartboardApp(App):
             error_label = Label(
                 text="Please enter a valid score!",
                 font_size=font_size,
-                size_hint=(0.5, 0.1),
+                size_hint=(0.6, 0.1),
                 pos_hint={"center_x": 0.5, "center_y": 0.08},
             )
             self.layout.add_widget(error_label)
@@ -319,12 +308,9 @@ class DartboardApp(App):
         self.turns_left_label.text = f"Turns Left: {self.turns_left}"
         self.darts_left_label.text = f"Darts Left: {self.darts_left}"
         self.points_left_label.text = f"Points Left: {self.points_left}"
-        self.probability_label.text = (
-            f"You will finish with probability: {round(self.probability, 2)}"
-        )
+        self.probability_label.text = f"You will win with {round(self.probability * 100, 1)}% probability."
 
     def handle_click(self, position):
-        """Handle the user click on the dartboard."""
         self.clicked_position = position
 
         if hasattr(self, "dartboard"):
