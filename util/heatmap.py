@@ -36,7 +36,7 @@ def plot_heatmap_from_cartesian_data(data, radiuses=radiuses):
     cbar.set_label('Probability of winning', fontsize=30)
     cbar.ax.tick_params(labelsize=24)
     # Make ticks into percentage 0.05 -> 5%
-    cbar.ax.set_yticklabels(['{:.0f}%'.format(i*100) for i in cbar.get_ticks()], fontsize=24)
+    cbar.ax.set_yticklabels(['{:.1f}%'.format(i*100) for i in cbar.get_ticks()], fontsize=24)
 
     # Add circular lines at specified radii
     if radiuses:

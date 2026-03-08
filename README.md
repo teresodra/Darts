@@ -5,7 +5,7 @@ This repository presents a simple example of how uncertainty can be handled in o
 
 # Darts Strategy Optimiser
 
-Playing darts with your friends and want to maximise your chances of winning? This repo is for you ^disclaimer.
+Playing darts with your friends and want to maximise your chances of winning? This repo is for you [see Disclaimer](#disclaimer).
 
 ### Finding your skill
 
@@ -42,4 +42,10 @@ python dartboard.py
 
 ```
 
-disclaimer: This repository is used only to illustrate the technology used to optimise under uncertanty. If you want a program for a more realistic scenario (i.e. having an oponent), please contact the owner of the repository.
+Playing darts with your friends and want to maximise your chances of winning? This repo is for you ([see Disclaimer](#disclaimer)).
+
+...
+
+#### Disclaimer
+
+This repository is used only to illustrate the technology used to optimise under uncertanty. If you want a program for a more realistic scenario (i.e. having an oponent), please contact the owner of the repository.
