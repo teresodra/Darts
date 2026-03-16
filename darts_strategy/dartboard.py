@@ -9,9 +9,9 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 
-from constants import positions, radiuses
-from players import Player
-from strategies import GameStrategy
+from .constants import positions, radiuses
+from .players import Player
+from .strategies import GameStrategy
 
 # Open window maximized
 Window.maximize()

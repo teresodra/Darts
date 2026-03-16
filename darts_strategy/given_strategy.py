@@ -2,7 +2,7 @@
 import numpy as np
 import math
 
-from constants import positions, radiuses
+from .constants import positions, radiuses
 
 def give_strategy(max_points):
     strategy = dict()

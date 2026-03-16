@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
-from constants import radiuses
+from .constants import radiuses
 
 def plot_heatmap_from_cartesian_data(data, radiuses=radiuses):
     """

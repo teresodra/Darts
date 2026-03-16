@@ -1,4 +1,4 @@
-from Objects.cells import Cell, Region
+from .objects.cells import Cell, Region
 import numpy as np
 # NORMAL DARTBOARD
 

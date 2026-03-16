@@ -2,8 +2,8 @@ import os
 import pickle
 import math
 import numpy as np
-from constants import radiuses, cells
-from util.integrate import integrate_gaussian_in_sector_region
+from .constants import radiuses, cells
+from .util.integrate import integrate_gaussian_in_sector_region
 
 class Player:
     def __init__(self,

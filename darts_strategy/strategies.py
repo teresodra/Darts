@@ -2,9 +2,9 @@ import os
 import pickle
 import numpy as np
 from given_strategy import give_strategy
-from players import Player
-from util.heatmap import plot_heatmap_from_cartesian_data
-from constants import cells
+from .players import Player
+from .util.heatmap import plot_heatmap_from_cartesian_data
+from .constants import cells
 
 class GameStrategy:
     def __init__(self, player, n_turns, max_points, mode='optimal'):

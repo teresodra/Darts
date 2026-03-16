@@ -1,5 +1,5 @@
 import numpy as np
-from Objects.cells import Region
+from .objects.cells import Region
 
 def gaussian(x, y, mu, inv_sigma):
     dx = x - mu[0]
