@@ -1,7 +1,7 @@
 import os
 import pickle
 import numpy as np
-from given_strategy import give_strategy
+from .given_strategy import give_strategy
 from .players import Player
 from .util.heatmap import plot_heatmap_from_cartesian_data
 from .constants import cells
@@ -31,7 +31,7 @@ class GameStrategy:
         # Construct the full path
         folder = 'players'
         files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder, file))]
-        file_path = os.path.join('players', f'{file_name}.pkl')
+        file_path = os.path.join('darts_strategy/players', f'{file_name}.pkl')
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"No saved player found at {file_path}")
 

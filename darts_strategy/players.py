@@ -2,8 +2,12 @@ import os
 import pickle
 import math
 import numpy as np
+from pathlib import Path
 from .constants import radiuses, cells
 from .util.integrate import integrate_gaussian_in_sector_region
+
+PACKAGE_DIR = Path(__file__).resolve().parent
+PLAYERS_DIR = PACKAGE_DIR / "players"
 
 class Player:
     def __init__(self,
@@ -23,8 +27,10 @@ class Player:
         )
 
         # Check if the grid probabilities file already exists
-        if os.path.exists(f'players/skill_{skill}.pkl'):
-            with open(f'players/skill_{skill}.pkl', 'rb') as file:
+        player_file = PLAYERS_DIR / f"skill_{skill}.pkl"
+
+        if player_file.exists():
+            with player_file.open("rb") as file:
                 saved_player = pickle.load(file)
                 self.grid_probabilities = saved_player.grid_probabilities
         else:
@@ -32,9 +38,9 @@ class Player:
             self.save_to_file()
 
     def save_to_file(self):
-        if not os.path.exists('players'):
-            os.makedirs('players')
-        with open(f'players/skill_{self.skill}.pkl', 'wb') as file:
+        PLAYERS_DIR.mkdir(parents=True, exist_ok=True)
+        player_file = PLAYERS_DIR / f"skill_{self.skill}.pkl"
+        with player_file.open("wb") as file:
             pickle.dump(self, file)
 
     def create_distribution(self, points:list, dartboard:dict=None, force_mean_0:bool=False):
@@ -76,7 +82,6 @@ class Player:
             for radius in radiuses_grid:
                 aiming_point = (radius * math.cos(phi), radius * math.sin(phi))
                 grid_probabilities[aiming_point] = self.probabilities(aiming_point)
-                print(aiming_point, grid_probabilities[aiming_point])
         return grid_probabilities
 
     def probabilities(self, aiming_point):
