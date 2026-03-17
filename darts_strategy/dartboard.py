@@ -132,7 +132,7 @@ class DartboardApp(App):
 
         self.starting_points_label, self.starting_points_input = self.add_label_and_input("Starting Points:")
         self.n_turns_label, self.n_turns_input = self.add_label_and_input("No. of Turns:")
-        self.skill_label, self.skill_input = self.add_label_and_input("Skill Level (pro=15, regular=20, amateur=35):")
+        self.skill_label, self.skill_input = self.add_label_and_input("Skill (if pro write 15, if regular=20, if amateur=35):")
 
         btn = Button(
             text="Submit",

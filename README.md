@@ -33,20 +33,20 @@ Given your score, number of turns you want to finish in, and your skill, the pro
 ### Heatmap
 Indicating, for example, 17 points left, 1 turn and skill 35, a heatmap showing the probability of winning when aiming at each point on the dartboard is displayed,
 <p align="center">
-  <img src="images/heatmap.png" alt="Heatmap of probabilities" width="450">
+  <img src="darts_strategy/images/heatmap.png" alt="Heatmap of probabilities" width="450">
 </p>
 
 
 ### Interactive application
 After closing the heatmap, an interactive application will pop up to guide you through your throws.
-![Interactive dartboard](images/application.png)
+![Interactive dartboard](darts_strategy/images/application.png)
 
 
 
 
 ## Setup and Run
 
-From the project root, create a virtual environment, install the dependencies, and run `main.py`.
+From the project root, create a virtual environment, install the dependencies, and run `__main__.py`.
 
 ### macOS / Linux
 
@@ -55,7 +55,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-python main.py
+python -m darts_strategy
 ```
 
 ### Windows (Command promt)
@@ -65,7 +65,7 @@ python -m venv .venv
 .venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-python main.py
+python -m darts_strategy
 ```
 
 
